@@ -1,0 +1,110 @@
+version: "3"
+services:
+  chrome:
+    image: selenium/node-chrome:4.8.1-20230306
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
+    volumes:
+      - ./upload:/home/upload
+    environment:
+      - TZ=Asia/Shanghai
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_SESSIONS=5
+  edge:
+    image: selenium/node-edge:4.8.1-20230306
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
+    volumes:
+      - ./upload:/home/upload
+    environment:
+      - TZ=Asia/Shanghai
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_SESSIONS=5
+
+  firefox:
+    image: selenium/node-firefox:4.8.1-20230306
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
+    volumes:
+      - ./upload:/home/upload
+    environment:
+      - TZ=Asia/Shanghai
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_SESSIONS=5
+
+  chrome_video:
+    image: selenium/video:ffmpeg-4.3.1-20230306
+    volumes:
+      - ./videos:/videos
+    depends_on:
+      - chrome
+    environment:
+      - TZ=Asia/Shanghai
+      - DISPLAY_CONTAINER_NAME=chrome
+      - FILE_NAME=chrome_video.mp4
+
+  edge_video:
+    image: selenium/video:ffmpeg-4.3.1-20230306
+    volumes:
+      - ./videos:/videos
+    depends_on:
+      - edge
+    environment:
+      - TZ=Asia/Shanghai
+      - DISPLAY_CONTAINER_NAME=edge
+      - FILE_NAME=edge_video.mp4
+
+  firefox_video:
+    image: selenium/video:ffmpeg-4.3.1-20230306
+    volumes:
+      - ./videos:/videos
+    depends_on:
+      - firefox
+    environment:
+      - TZ=Asia/Shanghai
+      - DISPLAY_CONTAINER_NAME=firefox
+      - FILE_NAME=firefox_video.mp4
+
+  selenium-hub:
+    image: selenium/hub:4.8.1-20230306
+    container_name: selenium-hub
+    environment:
+      - TZ=Asia/Shanghai
+
+  fastapi:
+    build:
+      context: ./fastapi/
+      dockerfile: Dockerfile
+    container_name: fastapi
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./upload:/home/fastapi/upload
+  nginx:
+    image: nginx
+    container_name: nginx
+    ports:
+      - "8080:80"
+    environment:
+      - TZ=Asia/Shanghai
+    depends_on:
+      - fastapi
+      - chrome
+      - chrome_video
+      - edge
+      - edge_video
+      - firefox
+      - firefox_video
+      - selenium-hub
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/logs:/var/log/nginx

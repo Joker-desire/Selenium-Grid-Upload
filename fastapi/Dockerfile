@@ -4,7 +4,8 @@ LABEL maintainer="Joker-desire <yangyindesire@gmail.com>"
 
 COPY . /home/fastapi/
 
-RUN pip3 install -r /home/fastapi/requirements.txt
+RUN pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple && \
+    pip install -r /home/fastapi/requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 WORKDIR /home/fastapi/
 

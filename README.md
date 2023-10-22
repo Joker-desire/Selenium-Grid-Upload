@@ -71,8 +71,13 @@ print(files_path)
 # ['/home/upload/2023/10/22/19676048770179.JPG', '/home/upload/2023/10/22/19676121458637.png']
 ```
 
-## 部署启动
+## 部署启动（[Selenium-Grid-Upload](https://github.com/Joker-desire/Selenium-Grid-Upload)）
 ```bash
+# 克隆项目
+git clone https://github.com/Joker-desire/Selenium-Grid-Upload.git
+# 进入项目目录
+cd Selenium-Grid-Upload
+# 启动
 sh start.sh
 ```
 

@@ -49,7 +49,7 @@
    # from selenium.webdriver.firefox import options
    # from selenium.webdriver.edge import options
    
-   driver = webdriver.Remote(command_executor="http://127.0.0.1:8080/grid/hub", options=options.Options())
+   driver = webdriver.Remote(command_executor="http://admin:admin@127.0.0.1:8080/grid/hub", options=options.Options())
    ```
 
 3. Selenium Grid 状态
@@ -72,13 +72,17 @@
        :param pictures: 图片路径列表
        :return: 图片上传后在浏览器实例中的路径列表
        """
-       url = "http://127.0.0.1:8080/api/upload"
+       url = "http://admin:admin@127.0.0.1:8080/api/upload"
        files = [("files", open(picture, 'rb')) for picture in pictures]
        response = requests.post(url, files=files)
-       res = response.json()
-       files_path = res.get("data")
-       return [data.get("browser_file_path") for data in files_path]
-   
+       if response.status_code == 401:
+           raise Exception("Authorization Required")
+       elif response.status_code != 200:
+           raise Exception("Upload Failed")
+       else:
+           res = response.json()
+           return [data.get("browser_file_path") for data in res.get("data", [])]
+
    
    files_path = upload(["/Users/example/Pictures/6.JPG", "/Users/example/Pictures/7.png"])
    print(files_path)
@@ -101,6 +105,11 @@
 3. 运行
     ```bash
     sh grid.sh run
+   ```
+4. 默认superuser
+    ```text
+    username: admin
+    password: admin
    ```
 
 ### 命令行
@@ -128,6 +137,10 @@
    ```bash
    sh grid.sh down
    ```
+6. 创建新的superuser
+    ```bash
+    sh grid.sh superuser <username>
+    ```
 
 ## 示例
 
@@ -144,18 +157,22 @@ def upload(pictures):
     :param pictures: 图片路径列表
     :return: 图片上传后在浏览器实例中的路径列表
     """
-    url = "http://127.0.0.1:8080/api/upload"
+    url = "http://admin:admin@127.0.0.1:8080/api/upload"
     files = [("files", open(picture, 'rb')) for picture in pictures]
     response = requests.post(url, files=files)
-    res = response.json()
-    files_path = res.get("data")
-    return [data.get("browser_file_path") for data in files_path]
+    if response.status_code == 401:
+        raise Exception("Authorization Required")
+    elif response.status_code != 200:
+        raise Exception("Upload Failed")
+    else:
+        res = response.json()
+        return [data.get("browser_file_path") for data in res.get("data", [])]
 
 
 # 在需要执行上传的模拟程序前，先进行上传需要用到的图片
 files_path = upload(["/Users/example/Pictures/6.JPG", "/Users/example/Pictures/7.png"])
 
-driver = webdriver.Remote(command_executor="http://127.0.0.1:8080/grid/hub", options=options.Options())
+driver = webdriver.Remote(command_executor="http://admin:admin@127.0.0.1:8080/grid/hub", options=options.Options())
 
 driver.get("https://www.example.com/upload.html")
 

@@ -24,7 +24,12 @@ function run() {
       ${compose} --file 'docker-compose.yml' --project-name 'selenium-grid-upload' down
       docker images | grep "selenium-grid-upload_fastapi" | awk '{print $1":"$2}' | xargs docker rmi
     ;;
-    *)  echo 'You do not select in [run, start, restart, stop, down]'
+    'superuser')
+      echo "Create user: $2"
+      htpasswd -cm ./nginx/pass $2
+    ;;
+    *)
+      echo 'You do not select in [run, start, restart, stop, down, superuser]'
     ;;
 esac
 }

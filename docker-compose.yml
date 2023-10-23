@@ -107,4 +107,5 @@ services:
       - selenium-hub
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/pass:/usr/local/nginx/pass
       - ./nginx/logs:/var/log/nginx

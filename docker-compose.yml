@@ -1,7 +1,7 @@
 version: "3"
 services:
   chrome:
-    image: selenium/node-chrome:latest
+    image: selenium/node-chrome:4.8.1-20230306
     shm_size: 2gb
     depends_on:
       - selenium-hub
@@ -14,7 +14,7 @@ services:
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
       - SE_NODE_MAX_SESSIONS=5
   edge:
-    image: selenium/node-edge:latest
+    image: selenium/node-edge:4.8.1-20230306
     shm_size: 2gb
     depends_on:
       - selenium-hub
@@ -28,7 +28,7 @@ services:
       - SE_NODE_MAX_SESSIONS=5
 
   firefox:
-    image: selenium/node-firefox:latest
+    image: selenium/node-firefox:4.8.1-20230306
     shm_size: 2gb
     depends_on:
       - selenium-hub
@@ -42,7 +42,7 @@ services:
       - SE_NODE_MAX_SESSIONS=5
 
   chrome_video:
-    image: selenium/video:latest
+    image: selenium/video:ffmpeg-4.3.1-20230306
     volumes:
       - ./videos:/videos
     depends_on:
@@ -53,7 +53,7 @@ services:
       - FILE_NAME=chrome_video.mp4
 
   edge_video:
-    image: selenium/video:latest
+    image: selenium/video:ffmpeg-4.3.1-20230306
     volumes:
       - ./videos:/videos
     depends_on:
@@ -64,7 +64,7 @@ services:
       - FILE_NAME=edge_video.mp4
 
   firefox_video:
-    image: selenium/video:latest
+    image: selenium/video:ffmpeg-4.3.1-20230306
     volumes:
       - ./videos:/videos
     depends_on:
@@ -75,7 +75,7 @@ services:
       - FILE_NAME=firefox_video.mp4
 
   selenium-hub:
-    image: selenium/hub:latest
+    image: selenium/hub:4.8.1-20230306
     container_name: selenium-upload-hub
     environment:
       - TZ=Asia/Shanghai
